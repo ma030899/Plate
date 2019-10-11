@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="cn.test.mapper.PicDao">
+
+	<resultMap id="picResultMap" type="cn.test.entity.Pic">
+		<id property="id" column="id" />
+		<result property="path" column="path" />
+		<result property="info" column="info" />
+		<result property="href" column="href" />
+
+	</resultMap>
+
+	<!-- 插入到数据库 -->
+	<insert id="insertBean" parameterType="cn.test.entity.Pic">
+		insert into m_pic
+		(path,info,href)
+		values (#{path},#{info},#{href})
+	</insert>
+
+	<!-- 根据ID删除数据库的记录 -->
+	<delete id="deleteBean" parameterType="int">
+		delete from m_pic
+		where
+		id=#{id}
+	</delete>
+
+	<!-- 根据ID更新数据库的记录 -->
+	<update id="updateBean" parameterType="cn.test.entity.Pic">
+		update
+		m_pic
+		<set>
+			<trim suffixOverrides=",">
+
+				<if test="path !=null">
+					path=#{path},
+				</if>
+				<if test="info !=null">
+					info=#{info},
+				</if>
+				<if test="href !=null">
+					href=#{href}
+				</if>
+
+			</trim>
+		</set>
+		where
+		id=#{id}
+	</update>
+	<select id="selectBeanById" parameterType="cn.test.entity.Pic"
+		resultMap="picResultMap">
+		select * from m_pic where id=#{id}
+	</select>
+	<select id="selectBeanList" parameterType="int"
+		resultMap="picResultMap">
+		select * from m_pic
+		order by id
+		limit #{start}, #{limit}
+	</select>
+	<select id="selectBeanCount" parameterType="int"
+		resultType="int">
+		select count(id) from m_pic
+	</select>
+</mapper>
+
+
+
+
+
+
+

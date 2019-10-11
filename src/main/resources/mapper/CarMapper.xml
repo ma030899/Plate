@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+	<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="cn.test.mapper.CarMapper">
+	<!-- 缓存配置 -->
+	<cache eviction="LRU" flushInterval="30000" size="512"
+		readOnly="true" />
+	<resultMap id="BaseResultMap" type="cn.test.entity.Car">
+		<id column="car_id" property="carId" jdbcType="INTEGER" />
+		<result column="car_num" property="allCarNum"
+			jdbcType="VARCHAR" />
+		<result column="car_cor" property="allCarCor"
+			jdbcType="VARCHAR" />
+		<result column="car_location" property="carLocation"
+			jdbcType="VARCHAR" />
+		<result column="car_time" property="carTime" jdbcType="VARCHAR" />
+		<result column="blue_count" property="blueCount" jdbcType="INTEGER" />
+		<result column="green_count" property="greenCount" jdbcType="INTEGER" />
+		<result column="yellow_count" property="yellowCount" jdbcType="INTEGER" />
+		<result column="unknow_count" property="unknowCount" jdbcType="INTEGER" />
+		
+	</resultMap>
+	<!-- 根据车辆所在地查询 -->
+	<select id="findByCarLocation" parameterType="cn.test.entity.Car" resultMap="BaseResultMap">
+    select * from m_car 
+    <where>
+    	<if test="car_location!=null and car_location!=''">
+    	AND car_location LIKE CONCAT(CONCAT('%',#{car_location},'%'))
+    	</if>
+    </where>
+  	  
+  </select>
+  <!-- 根据颜色查询 -->
+	<select id="findByColor" parameterType="cn.test.entity.Car" resultMap="BaseResultMap">
+    select * from m_car
+    <where>
+    	<if test="car_cor!=null and car_cor!=''">
+    	AND car_cor LIKE CONCAT(CONCAT('%',#{car_cor},'%'))
+    	</if>
+    </where> 	  
+  </select>
+	<!-- 通过id查询用户信息 -->
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultType="cn.test.entity.Car">
+		select car_id carId,car_num allCarNum,
+		car_cor allCarCor,car_location carLocation,car_time carTime
+		from m_car
+		where car_id = #{car_id}
+	</select>
+	<!-- 查询 -->
+	<select id="selectAll" resultType="cn.test.entity.Car">
+		select car_id carId,car_num allCarNum,
+		car_cor allCarCor,car_location
+		carLocation,car_time carTime from m_car
+	</select>
+	<!-- 添加 -->
+	<insert id="insertCar" parameterType="cn.test.entity.Car">
+		insert into m_car(
+		car_num,car_cor,car_location,car_time,blue_count,green_count,yellow_count,unknow_count) values
+		(#{allCarNum},#{allCarCor},#{carLocation},#{carTime},#{blueCount},#{greenCount},#{yellowCount},#{unknowCount})
+	</insert>
+	<!-- 修改 -->
+	<update id="updateCar" parameterType="cn.test.entity.Car">
+		update m_car
+		set
+		car_num = #{allCarNum},
+		car_cor = #{allCarCor},
+		car_location = #{carLocation},
+		car_time = #{carTime}
+		where car_id = #{carId}
+	</update>
+	<!-- 根据id删除 -->
+	<delete id="deleteCar" parameterType="java.lang.Integer">
+		delete from m_car
+		where car_id = #{carId}
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="deleteMany" parameterType="int">
+    delete from m_car where car_id = #{carId} in
+    <foreach item="qid" collection="array" open="(" separator="," close=")">
+        #{qid}
+    </foreach>
+    </delete>
+</mapper>
